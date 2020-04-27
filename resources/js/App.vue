@@ -27,6 +27,7 @@
                 initiated: false,
                 profile: null,
                 role: '',
+                has_students: false,
                 req: axios.create({
                     baseUrl: BASE_URL
                 })
@@ -47,7 +48,6 @@
                         this.role = this.user.role_id;
                         this.loading = false;
                         this.initiated = true;
-
                         this.get_info();
 
                     }
@@ -59,6 +59,11 @@
                 this.req.get('api/get_info').then(response =>{
                     this.profile = response.data;
                 });
+            },
+
+            getData(data)
+            {
+                return data.substr(8, 2) + "." + data.substr(5, 2) + "." + data.substr(0, 4);
             }
         }
     };

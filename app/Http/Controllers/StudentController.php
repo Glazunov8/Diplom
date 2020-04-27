@@ -2,14 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Company;
-use App\Models\Mentors;
 use App\Models\Student;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
-class UserController extends Controller
+class StudentController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -18,30 +15,15 @@ class UserController extends Controller
      */
     public function index()
     {
-
+        return response(Student::all(), 200);
     }
 
-    public function getInfo()
+    public function confirmAcc(Request $request)
     {
-        $id = Auth::user()->getAuthIdentifier();
-        $user = User::where('id',$id)->first();
-        if($user->role_id != 10)
-        {
-            switch ($user->role_id)
-            {
-                case 1:
-                    return response()->json(Student::where('user_id', $id)->first());
-                    break;
-                case 2:
-                    return response()->json(Mentors::where('user_id', $id)->first());
-                    break;
-                case 3:
-                    return response()->json(Company::where('user_id', $id)->first());
-                    break;
-                default:
-                    return response()->json('aaaaaaaaaaaaaaa', 401);
-            }
-        }
+        $student = Student::where('id', $request->id)->first();
+        $student->confirmed = true;
+        $student->save();
+        return response()->json( Student::all());
     }
 
     /**
@@ -69,11 +51,11 @@ class UserController extends Controller
      * Display the specified resource.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function show($id)
+    public function show(Request $request)
     {
-
+        return response()->json(Student::where('user_id', $request->user_id)->first());
     }
 
     /**
@@ -103,10 +85,15 @@ class UserController extends Controller
      * Remove the specified resource from storage.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function destroy($id)
+    public function destroy(Request $request)
     {
-        //
+        $student = Student::where("id", $request->id)->first();
+        $user = User::where("id", $student->user_id)->first();
+
+        $student->delete();
+        $user->delete();
+        return response()->json(Student::all(), 200);
     }
 }

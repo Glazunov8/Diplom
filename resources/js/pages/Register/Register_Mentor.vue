@@ -15,20 +15,8 @@
             <el-form-item label="Отчество" prop="patronymic">
                 <el-input v-model="register.patronymic"></el-input>
             </el-form-item>
-            <el-form-item label="Образовательное учреждение" prop="group">
-                <el-select v-model="register.institute_id" filterable placeholder="Select">
-                    <el-option
-                        v-for="item in this.companies"
-                        v-if="item.confirmed === true && item.has_students === true"
-                        class="institutes"
-                        :key="item.id"
-                        :label="item.name"
-                        :value="item.id">
-                    </el-option>
-                </el-select>
-            </el-form-item>
-            <el-form-item label="Группа" prop="group">
-                <el-input v-model="register.group"></el-input>
+            <el-form-item label="Список технологий" prop="technology_stack">
+                <el-input type="textarea" :rows="2" v-model="register.technology_stack"></el-input>
             </el-form-item>
             <el-form-item label="Электронная почта" prop="email">
                 <el-input v-model="register.email"></el-input>
@@ -73,19 +61,15 @@
             };
 
             return {
-                companies: null,
-
                 register: {
                     first_name: '',
                     second_name: '',
                     patronymic: '',
-                    group: '',
-                    institute_id: '',
+                    technology_stack: '',
                     email: '',
                     password: '',
                     repassword: '',
                     error: '',
-
                 },
                 rules: {
                     first_name: [
@@ -100,12 +84,10 @@
                         { required: true, message: 'Пожалуйста введите Отчество', trigger: 'blur' },
                         { min: 3, message: 'Длина должна быть не меньше 3', trigger: 'blur' }
                     ],
-                    group: [
+                    technology_stack: [
                         { required: true, message: 'Пожалуйста введите Группу', trigger: 'blur' },
-                        { min: 3, message: 'Длина должна быть не меньше 3', trigger: 'blur' }
-                    ],
-                    institute_id: [
-                        {required: true, messege:'Пожалуйста выберете Образовательное учреждение', trigger:'blur'}
+                        { min: 3, message: 'Длина должна быть не меньше 3', trigger: 'blur' },
+                        { max:255, message: 'Длина должна быть не больше 255', trigger: 'blur' }
                     ],
                     email: [
                         { required: true, message: 'Пожалуйста введите Электронную почту',  trigger: 'blur' },
@@ -123,18 +105,6 @@
             };
         },
 
-        mounted() {
-            axios
-                .get('/api/index_company')
-                .then(response => {
-                    this.loading = false;
-                    this.companies = response.data.companies;
-                }).catch(error => {
-                this.loading = false;
-                this.error = error.response.data.message || error.message;
-            });
-        },
-
         methods: {
             submitForm(formName) {
                 this.$refs[formName].validate((valid) => {
@@ -143,14 +113,14 @@
                             first_name: this.register.first_name,
                             second_name: this.register.second_name,
                             patronymic: this.register.patronymic,
-                            institute_id: this.register.institute_id,
-                            group: this.register.group,
+                            company_id: this.app.profile.id,
+                            technology_stack: this.register.technology_stack,
                             email: this.register.email,
                             password: this.register.password
                         };
 
-                        this.app.req.post('auth/register_student', data).then(response =>{
-                            this.$router.push("/login");
+                        this.app.req.post('auth/register_mentor', data).then(response =>{
+                            this.$router.push("/home");
                         }).catch(error =>{
                             this.register.error = error.response.data.error;
                         });
@@ -169,7 +139,7 @@
 </script>
 
 <style>
-    .institutes{
+    .companies{
         max-width: 500px;
         overflow: hidden;
     }

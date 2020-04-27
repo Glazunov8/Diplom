@@ -21,7 +21,6 @@ class CreateMentorsTable extends Migration
             $table->string('second_name');
             $table->string('patronymic');
             $table->string('technology_stack');
-            $table->string('links')->nullable();
             $table->boolean('confirmed')->default(false);
             $table->timestamps();
         });

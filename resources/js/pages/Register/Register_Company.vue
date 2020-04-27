@@ -93,15 +93,23 @@
                     id: id.toString(),
                 };
                 this.app.req.post('api/get_company', data).then(response=>{
-                    this.company = response.data;
-                    this.register.inn = response.data.data.inn;
-                    this.register.ogrn = response.data.data.ogrn;
-                    this.register.address = response.data.data.address.value;
-                    this.register.kpp = response.data.data.kpp;
-                    this.register.name = response.data.unrestricted_value;
+                    if(response != null){
+                        this.company = response.data;
+                        this.register.inn = response.data.data.inn;
+                        this.register.ogrn = response.data.data.ogrn;
+                        this.register.address = response.data.data.address.value;
+                        this.register.kpp = response.data.data.kpp;
+                        this.register.name = response.data.unrestricted_value;
 
-                    let str = response.data.data.okved;
-                    this.register.email = str.substr(0, 2);
+                        let str = response.data.data.okved;
+                        let firstNum = str.substr(0, 2);
+                        let secondNum = str.substr(3, 1)
+
+                        if(Number(firstNum) === 85 && (Number(secondNum) === 2 || Number(secondNum === 3)))
+                        {
+                            this.register.has_students = true;
+                        }
+                    }
                 })
             }
 
@@ -212,15 +220,17 @@
         },
         methods: {
             submitForm(formName) {
-                this.$refs[formName].validate((valid) => {
-                    if (valid) {
+                // this.$refs[formName].validate((valid) => {
+                //     if (valid) {
                         const data = {
                             name: this.register.name,
                             has_students: this.register.has_students,
                             address: this.register.address,
                             web_site: this.register.web_site,
                             phone_number: this.register.phone_number,
-                            inn_kpp: this.register.inn_kpp,
+                            inn: this.register.inn,
+                            kpp: this.register.kpp,
+                            ogrn: this.register.ogrn,
                             email: this.register.email,
                             password: this.register.password
                         };
@@ -231,11 +241,11 @@
                             this.register.error = error.response.data.error;
                         });
 
-                    } else {
-                        console.log('error submit!!');
-                        return false;
-                    }
-                });
+                //     } else {
+                //         console.log('error submit!!');
+                //         return false;
+                //     }
+                // });
             },
             resetForm(formName) {
                 this.$refs[formName].resetFields();

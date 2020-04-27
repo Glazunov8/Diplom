@@ -20,7 +20,9 @@ class CreateCompaniesTable extends Migration
             $table->string('phone_number');
             $table->string('web_site');
             $table->string('address');
-            $table->string('inn_kpp');
+            $table->string('kpp')->unique();
+            $table->string('inn')->unique();
+            $table->string('ogrn')->unique();
             $table->boolean('has_students');
             $table->boolean('confirmed')->default(false);
             $table->timestamps();

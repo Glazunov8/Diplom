@@ -3,6 +3,7 @@ import  Register_Student from './pages/Register/Register_Student';
 import  Register_Company from './pages/Register/Register_Company';
 import ConfirmCompany from "./pages/Confirm/ConfirmCompany";
 import ConfirmStudent from "./pages/Confirm/ConfirmStudent";
+import Register_Mentor from "./pages/Register/Register_Mentor";
 import  Login from './pages/Login';
 
 
@@ -21,6 +22,11 @@ export default [
         path: '/register_company',
         component: Register_Company,
         name: 'register_company'
+    },
+    {
+        path: '/register_mentor',
+        component: Register_Mentor,
+        name: 'register_mentor'
     },
     {
         path: '/login',

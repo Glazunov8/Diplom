@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Company;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class CompanyController extends Controller
@@ -52,11 +53,11 @@ class CompanyController extends Controller
      * Display the specified resource.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function show($id)
+    public function show(Request $request)
     {
-        //
+        return response()->json(Company::where('user_id', $request->user_id)->first());
     }
 
     /**
@@ -86,10 +87,17 @@ class CompanyController extends Controller
      * Remove the specified resource from storage.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function destroy($id)
+    public function destroy(Request $request)
     {
-        //
+        $company = Company::where("id", $request->id)->first();
+        $user = User::where("id", $company->user_id)->first();
+
+        $company->delete();
+        $user->delete();
+
+        $companies = Company::all();
+        return response()->json(["companies"=>$companies], 200);
     }
 }
